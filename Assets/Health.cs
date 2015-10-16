@@ -14,9 +14,9 @@ public class Health : MonoBehaviour {
 	public void TakeDamage(int damage)
 	{
 		hp -= damage;
+		hp = Mathf.Max (hp, 0);
 		if (hp <= 0)
 		{
-			hp = 0;
 			Debug.Log("Died:" + gameObject);
 			Destroy(this.gameObject);
 		}
@@ -25,7 +25,7 @@ public class Health : MonoBehaviour {
 	public void Heal(int amount)
 	{
 		hp += amount;
-		hp = Mathf.Max (hp, maxHp);
+		hp = Mathf.Min (hp, maxHp);
 	}
 
 }
