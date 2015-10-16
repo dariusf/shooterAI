@@ -6,13 +6,13 @@ public class Bullet : MonoBehaviour {
 	private int damage = 1;
 	private int team = -2;
 
-	void OnCollisionEnter2D(Collision2D collision) {
+	void OnTriggerEnter2D(Collider2D collider) {
 
 		// If has health and not on same team, apply damage.
-		Health health = collision.gameObject.GetComponent<Health> ();
-		Player player = collision.gameObject.GetComponent<Player> ();
+		Health health = collider.gameObject.GetComponent<Health> ();
+		Player player = collider.gameObject.GetComponent<Player> ();
 		if ( health != null && (player == null || player.team != team) ) {
-			collision.gameObject.GetComponent<Health> ().TakeDamage (damage);
+			collider.gameObject.GetComponent<Health> ().TakeDamage (damage);
 			Destroy (gameObject);
 		}
 	}
