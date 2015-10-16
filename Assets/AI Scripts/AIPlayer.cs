@@ -41,6 +41,17 @@ public class AIPlayer : MonoBehaviour {
 		return bullets.ToArray();
 	}
 
+	protected Collider2D[] findEnemies(float range=1f) {
+		Collider2D[] colliders = Physics2D.OverlapCircleAll (gameObject.transform.position, range);
+		List<Collider2D> bullets = new List<Collider2D>();
+		foreach(Collider2D c in colliders)
+		{
+			if(isPlayer(c) && !playerIsOwnTeam (c))
+				bullets.Add(c);
+		}
+		return bullets.ToArray();
+	}
+
 	bool bulletIsOwnTeam(Collider2D b) {
 		Bullet bullet = b.GetComponent<Bullet> ();
 		if (player != null && bullet != null && player.team == bullet.getTeam() && player.team >= 0) {
@@ -49,4 +60,19 @@ public class AIPlayer : MonoBehaviour {
 		return false;
 	}
 
+	bool isPlayer(Collider2D c) {
+		Player p = c.GetComponent<Player> ();
+		if (p != null) {
+			return true;
+		}
+		return false;
+	}
+
+	bool playerIsOwnTeam(Collider2D c) {
+		Player p = c.GetComponent<Player> ();
+		if (p != null && p.team == player.team) {
+			return true;
+		}
+		return false;
+	}
 }
