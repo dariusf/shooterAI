@@ -14,6 +14,10 @@ public class AIWeiLin : AIPlayer {
 	}
 	
 	void Update () {
+		Collider2D [] collidersAll = findBullets (10);
+		foreach (Collider2D c in collidersAll) {
+			c.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+		}
 
 		Collider2D [] colliders = findBullets (3);
 
