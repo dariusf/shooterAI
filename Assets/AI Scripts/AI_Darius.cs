@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class AI_Darius : MonoBehaviour {
 
 	public LayerMask bulletLayer;
-	public bool slowMotion = false;
 
 	private Movement2D movement2D;
 	private float speed;
@@ -15,10 +14,7 @@ public class AI_Darius : MonoBehaviour {
 		speed = movement2D.maxSpeed;
 	}
 
-	void Update () {
-		
-		Time.timeScale = slowMotion ? 0.3f : 1.0f;
-				
+	void Update () {				
 		Collider2D closest = findClosestBullet();
 		
 		Vector3 playerPosition = gameObject.transform.position;
