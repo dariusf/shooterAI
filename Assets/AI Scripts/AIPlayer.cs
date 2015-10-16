@@ -9,13 +9,13 @@ public class AIPlayer : MonoBehaviour {
 	protected Movement2D movement2D;
 	protected float speed;
 
-	void Start() {
+	protected void Start() {
 		movement2D = gameObject.GetComponent<Movement2D> ();
 		speed = movement2D.maxSpeed;
 	}
 
-	protected Collider2D findClosestBullet() {
-		Collider2D [] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, 1f, bulletLayer);
+	protected Collider2D findClosestBullet(float range=1f) {
+		Collider2D [] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, range, bulletLayer);
 		float minDist = float.MaxValue;
 		Collider2D closest = null;
 		foreach (Collider2D c in colliders) {
@@ -27,4 +27,10 @@ public class AIPlayer : MonoBehaviour {
 		}
 		return closest;
 	}
+
+	protected Collider2D[] findBullets(float range=1f) {
+		return Physics2D.OverlapCircleAll(gameObject.transform.position, range, bulletLayer);
+	}
+
+
 }
