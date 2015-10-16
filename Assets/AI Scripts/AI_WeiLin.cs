@@ -2,19 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AI_WeiLin : MonoBehaviour {
+public class AI_WeiLin : AIPlayer {
 	
-	public LayerMask bulletLayer;
 	public GameObject BulletPrefab;
 	
-	private Movement2D movement2D;
-	private float speed;
-
 	float hitRadius;
 	
 	void Start() {
-		movement2D = gameObject.GetComponent<Movement2D> ();
-		speed = movement2D.maxSpeed;
 		hitRadius = GetComponent<CircleCollider2D>().radius + BulletPrefab.GetComponent<CircleCollider2D>().radius + 0.005f;
 	}
 	
