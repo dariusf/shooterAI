@@ -24,7 +24,7 @@ public class AIWeiLin : AIPlayer {
 			c.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
 		}
 
-		Collider2D [] colliders = findBullets (5);
+		Collider2D [] colliders = findBullets (4);
 
 		List<Collider2D> bullets = new List<Collider2D> (colliders);
 		
@@ -106,13 +106,14 @@ public class AIWeiLin : AIPlayer {
 				// 
 				float bulletSpeed = bulletDir.magnitude;
 				Vector3 futureBulletPos = bulletPos + bulletDir.normalized * bulletSpeed * (pDistance / movement2D.maxSpeed);
+				futureBulletPos -= 2f*hitRadius*bulletDir.normalized;
 				float futureBulletDist = (pos3D - futureBulletPos).magnitude;
 				Vector3 futureBulletToPos = pos3D - futureBulletPos;
 
 				
-				Debug.DrawLine(futureBulletPos, futureBulletPos - 2f*hitRadius*bulletDir.normalized);
+				Debug.DrawLine(futureBulletPos, futureBulletPos + 1f*hitRadius*bulletDir.normalized, Color.yellow);
 
-				float futureBulletProjection = Vector3.Dot(futureBulletToPos - 3f*hitRadius*bulletDir.normalized, bulletDir.normalized);
+				float futureBulletProjection = Vector3.Dot(futureBulletToPos, bulletDir.normalized);
 				float futurePDistance = Mathf.Sqrt(futureBulletToPos.magnitude*futureBulletToPos.magnitude 
 				                                   - futureBulletProjection*futureBulletProjection);
 
@@ -125,7 +126,7 @@ public class AIWeiLin : AIPlayer {
 
 
 				//float ss = futureBulletDist <= hitRadius ? futureBulletDist/hitRadius:0f;
-				float ss = Mathf.Clamp(2-futureBulletDist, 0, 1);///hitRadius;
+				float ss = Mathf.Clamp(1-futureBulletDist, 0, 1);///hitRadius;
 				if (pDistance <= hitRadius ) {
 					ss += (Mathf.Min(1f/futurePDistance, 1f));
 				}
@@ -146,8 +147,8 @@ public class AIWeiLin : AIPlayer {
 		}
 
 		// Move to middle
-		if (pos.magnitude > 1f)
-			s += pos.magnitude*0.00001f;
+		if ((pos+new Vector2(0,2)).magnitude > 1f)
+			s += (pos+new Vector2(0,2)).magnitude*0.00001f;
 
 		/*
 		foreach (Collider2D enemy in enemiesAll) {
