@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AI_Darius : AIPlayer {
+public class AIDarius : AIPlayer {
 
 	void Update () {	
 		Collider2D closest = findClosestBullet();

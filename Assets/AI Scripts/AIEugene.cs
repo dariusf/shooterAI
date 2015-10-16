@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AI_Eugene : AIPlayer {
+public class AIEugene : AIPlayer {
 	
 	float EPS = 0.0001f;
 //	float xMax = 3f;

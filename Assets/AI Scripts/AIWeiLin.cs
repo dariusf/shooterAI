@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class AI_WeiLin : AIPlayer {
+public class AIWeiLin : AIPlayer {
 	
 	public GameObject BulletPrefab;
 	
