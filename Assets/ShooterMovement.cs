@@ -13,7 +13,6 @@ public class ShooterMovement : MonoBehaviour {
 	float ySpeedPerSec = 1.9f;
 
 	void Start () {
-		
 	}
 	
 	void Update () {

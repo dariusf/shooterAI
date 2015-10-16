@@ -2,20 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Movement : MonoBehaviour {
+public class AI_Darius : MonoBehaviour {
 
 	public LayerMask bulletLayer;
 	public bool slowMotion = false;
-	
-	// Player movement bounds
-	float xMax = 6f;
-	float xMin = -6f;
-	float yMax = 3f;
-	float yMin = -4f;
 
-	// Player speed
-	float speed = 3f;
-	
+	private Movement2D movement2D;
+	private float speed;
+
+	void Start() {
+		movement2D = gameObject.GetComponent<Movement2D> ();
+		speed = movement2D.maxSpeed;
+	}
+
 	void Update () {
 		
 		Time.timeScale = slowMotion ? 0.3f : 1.0f;
@@ -64,10 +63,8 @@ public class Movement : MonoBehaviour {
 	}
 	
 	void Move(Vector3 v) {
-		v = Vector3.ClampMagnitude(v, speed * Time.deltaTime);
 		Vector3 dest = v + gameObject.transform.position;
-		dest = new Vector3(Mathf.Clamp(dest.x, xMin, xMax), Mathf.Clamp(dest.y, yMin, yMax), 0f);
-		gameObject.transform.position = dest;
+		movement2D.MoveTo(dest);
 	}
 	
 	Vector2 Perpendicular(Vector2 start, Vector2 end) {
