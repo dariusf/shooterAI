@@ -9,10 +9,12 @@ public class AIWeiLin : AIPlayer {
 	float hitRadius;
 
 	private Collider2D[] enemiesAll;
+	private Vector2 prevMove = Vector2.zero;
+
 
 	new void Start() {
 		base.Start ();
-		hitRadius = GetComponent<CircleCollider2D>().radius + BulletPrefab.GetComponent<CircleCollider2D>().radius + 0.005f;
+		hitRadius = GetComponent<CircleCollider2D>().radius + BulletPrefab.GetComponent<CircleCollider2D>().radius + 0.02f;
 		enemiesAll = findEnemies (10);
 	}
 	
@@ -41,15 +43,27 @@ public class AIWeiLin : AIPlayer {
 			int searchPoints = 32;
 			int searchLayers = 60;
 			float searchRangeK = 0.05f;
-			float searhLineThreshold = 1.2f;
+			float searhLineThreshold = 100f;
 			
-			for (float i=0 ; i<360 ; i+=360f/searchPoints) {				
+			for (float i=0 ; i<360 ; i+=360f/searchPoints) {
+				float ssum = 0;
 				for (int j=1 ; j<=searchLayers ; j++) {
 					float rad = Mathf.Deg2Rad * i;
 					Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * j * searchRangeK;
+					
+					Vector3 dir3D = new Vector3 (dir.x, dir.y, 0);
+					Vector3 dst = gameObject.transform.position + dir3D;
+					if (movement2D.ClampToBorders(dst) != dst) {
+						continue;
+					}
 
 					float s = score(bullets, new Vector2(gameObject.transform.position.x, gameObject.transform.position.y)
 					                + dir);
+
+					if (ssum < searhLineThreshold)
+						ssum *= 0.90f;
+					ssum += s;
+					s = ssum;
 
 					float sInv = 1f/s;
 					Debug.DrawLine(gameObject.transform.position, gameObject.transform.position+new Vector3(dir.x, dir.y, 0), new Color(s,s,s));
@@ -58,8 +72,8 @@ public class AIWeiLin : AIPlayer {
 						minScore = s;
 						bestDir = dir;
 					} else {
-						if (s > searhLineThreshold) {
-							Debug.Log(s);
+						if (s > searhLineThreshold && minScore < searhLineThreshold) {
+							//Debug.Log(s);
 							break;
 						}
 					}
@@ -72,6 +86,8 @@ public class AIWeiLin : AIPlayer {
 
 		Vector3 dest = gameObject.transform.position + moveDir;
 		movement2D.MoveTo (dest);
+
+		prevMove = moveDir;
 	}
 
 	float score(List<Collider2D> bullets, Vector2 pos, bool draw=false) {
@@ -92,7 +108,7 @@ public class AIWeiLin : AIPlayer {
 			//               bullets[i].gameObject.transform.position, Color.red);
 
 			// In line of fire
-			if (pDistance <= hitRadius && projectionLength >= -0.1){// -hitRadius*2) {
+			if (pDistance <= hitRadius && projectionLength >= -0.3){// -hitRadius*2) {
 				Debug.DrawLine(bulletPos, bullets[i].gameObject.transform.position, Color.green);
 
 				// Bullet max projected path
@@ -106,12 +122,13 @@ public class AIWeiLin : AIPlayer {
 				// 
 				float bulletSpeed = bulletDir.magnitude;
 				Vector3 futureBulletPos = bulletPos + bulletDir.normalized * bulletSpeed * (pDistance / movement2D.maxSpeed);
-				futureBulletPos -= 2f*hitRadius*bulletDir.normalized;
+				Debug.DrawLine(futureBulletPos, futureBulletPos - 1f*hitRadius*bulletDir.normalized, Color.yellow);
+
+				futureBulletPos -= 1f*hitRadius*bulletDir.normalized;
 				float futureBulletDist = (pos3D - futureBulletPos).magnitude;
 				Vector3 futureBulletToPos = pos3D - futureBulletPos;
 
 				
-				Debug.DrawLine(futureBulletPos, futureBulletPos + 1f*hitRadius*bulletDir.normalized, Color.yellow);
 
 				float futureBulletProjection = Vector3.Dot(futureBulletToPos, bulletDir.normalized);
 				float futurePDistance = Mathf.Sqrt(futureBulletToPos.magnitude*futureBulletToPos.magnitude 
@@ -121,13 +138,13 @@ public class AIWeiLin : AIPlayer {
 					futureBulletDist = 1000000;
 				}
 
-				Debug.DrawLine(futureBulletPos, bullets[i].gameObject.transform.position, Color.cyan);
-				Debug.DrawLine(pos, gameObject.transform.position, Color.magenta);
+				//Debug.DrawLine(futureBulletPos, bullets[i].gameObject.transform.position, Color.cyan);
+				//Debug.DrawLine(pos, gameObject.transform.position, Color.magenta);
 
 
 				//float ss = futureBulletDist <= hitRadius ? futureBulletDist/hitRadius:0f;
-				float ss = Mathf.Clamp(1-futureBulletDist, 0, 1);///hitRadius;
-				if (pDistance <= hitRadius ) {
+				float ss = Mathf.Clamp(5f/(futureBulletDist), 0, 10);///hitRadius;
+				if (futurePDistance <= hitRadius*1.5f ) {
 					ss += (Mathf.Min(1f/futurePDistance, 1f));
 				}
 

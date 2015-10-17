@@ -29,7 +29,7 @@ public class Movement2D : MonoBehaviour {
 		return pos;
 	}
 
-	private Vector3 ClampToBorders(Vector3 pos) {
+	public Vector3 ClampToBorders(Vector3 pos) {
 		return new Vector3(Mathf.Clamp(pos.x, xMin, xMax),
 		                   Mathf.Clamp(pos.y, yMin, yMax), 0f);
 	}
