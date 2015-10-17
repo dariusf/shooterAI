@@ -4,21 +4,26 @@ using System.Collections.Generic;
 
 public class AIDarius : AIPlayer {
 
-	void Update () {	
+	void Update () {
+
+		foreach (GameObject bullet in GameObject.FindGameObjectsWithTag("Bullet")) {
+			bullet.GetComponent<SpriteRenderer>().color = Color.white;
+		}
+
 		Collider2D closest = findClosestBullet();
 		
 		Vector3 playerPosition = gameObject.transform.position;
 				
 		if (closest == null) {
-			Vector3 dest1 = playerPosition.normalized * -speed * Time.deltaTime;
-			Move(dest1);
+			// TODO causes jitter when moving away from, then immediately towards a bullet
+			movement2D.MoveTo(Vector3.zero);
 		} else {
 			closest.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
 			
 			Vector3 closestVelocity = closest.GetComponent<Rigidbody2D>().velocity.normalized;
 			Vector3 p = Perpendicular(closest.gameObject.transform.position,
 									  closest.gameObject.transform.position + closestVelocity);
-							
+			p = p.normalized * speed * Time.deltaTime;
 
 			float dist1 = Vector3.Distance(playerPosition + p, closest.gameObject.transform.position);
 			float dist2 = Vector3.Distance(playerPosition - p, closest.gameObject.transform.position);
@@ -30,13 +35,8 @@ public class AIDarius : AIPlayer {
 			Vector3 awayFromBullet = whichIsCloser ? -p : p;
 			Debug.DrawLine(playerPosition, playerPosition + awayFromBullet, Color.white);		
 		
-			Move(awayFromBullet);
+			movement2D.Move(awayFromBullet);
 		}
-	}
-	
-	void Move(Vector3 v) {
-		Vector3 dest = v + gameObject.transform.position;
-		movement2D.MoveTo(dest);
 	}
 	
 	Vector2 Perpendicular(Vector2 start, Vector2 end) {
