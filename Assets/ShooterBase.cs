@@ -4,17 +4,30 @@ using System.Collections;
 public class ShooterBase : MonoBehaviour {
 	
 	[SerializeField]
-	private GameObject prefab_bullet;
+	protected GameObject prefab_bullet;
 
-	private Player player;
-	private int team = -1;
+	
+	protected AIPlayer aiPlayer;
 
-	private float cooldown = 0.5f;
+	protected Player player;
+	protected int team = -1;
+
+	public float cooldown = 0.5f;
 	private float nextBulletTime = 0f;
 
 
 	protected void Start() {
 		player = gameObject.GetComponent<Player> ();
+		aiPlayer = gameObject.GetComponent<AIPlayer> ();
+
+		foreach(AIPlayer a in gameObject.GetComponents<AIPlayer> ()) {
+			if (a.isActiveAndEnabled) { 
+				aiPlayer = a;
+				break;
+			}
+		}
+
+
 		if (player != null)
 			team = player.team;
 	}

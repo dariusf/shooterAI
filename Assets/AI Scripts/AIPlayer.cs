@@ -16,7 +16,7 @@ public class AIPlayer : MonoBehaviour {
 		speed = movement2D.maxSpeed;
 	}
 
-	protected Collider2D findClosestBullet(float range=1f, bool filterFF=true) {
+	public Collider2D findClosestBullet(float range=1f, bool filterFF=true) {
 		Collider2D [] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, range, bulletLayer);
 		float minDist = float.MaxValue;
 		Collider2D closest = null;
@@ -30,7 +30,7 @@ public class AIPlayer : MonoBehaviour {
 		return closest;
 	}
 
-	protected Collider2D[] findBullets(float range=1f, bool filterFF=true) {
+	public Collider2D[] findBullets(float range=1f, bool filterFF=true) {
 		Collider2D[] colliders = Physics2D.OverlapCircleAll (gameObject.transform.position, range, bulletLayer);
 		List<Collider2D> bullets = new List<Collider2D>();
 		foreach(Collider2D c in colliders)
@@ -41,7 +41,21 @@ public class AIPlayer : MonoBehaviour {
 		return bullets.ToArray();
 	}
 
-	protected Collider2D[] findEnemies(float range=1f) {
+	public Collider2D findClosestEnemy(float range=1f) {
+		Collider2D[] colliders = findEnemies (range);
+		float minDist = float.MaxValue;
+		Collider2D closest = null;
+		foreach (Collider2D c in colliders) {
+			float dist = (c.gameObject.transform.position - gameObject.transform.position).magnitude;
+			if (dist < minDist) {
+				minDist = dist;
+				closest = c;
+			}
+		}
+		return closest;
+	}
+
+	public Collider2D[] findEnemies(float range=1f) {
 		Collider2D[] colliders = Physics2D.OverlapCircleAll (gameObject.transform.position, range);
 		List<Collider2D> bullets = new List<Collider2D>();
 		foreach(Collider2D c in colliders)
@@ -52,7 +66,7 @@ public class AIPlayer : MonoBehaviour {
 		return bullets.ToArray();
 	}
 
-	bool bulletIsOwnTeam(Collider2D b) {
+	public bool bulletIsOwnTeam(Collider2D b) {
 		Bullet bullet = b.GetComponent<Bullet> ();
 		if (player != null && bullet != null && player.team == bullet.getTeam() && player.team >= 0) {
 			return true;
@@ -60,7 +74,7 @@ public class AIPlayer : MonoBehaviour {
 		return false;
 	}
 
-	bool isPlayer(Collider2D c) {
+	public bool isPlayer(Collider2D c) {
 		Player p = c.GetComponent<Player> ();
 		if (p != null) {
 			return true;
@@ -68,9 +82,9 @@ public class AIPlayer : MonoBehaviour {
 		return false;
 	}
 
-	bool playerIsOwnTeam(Collider2D c) {
+	public bool playerIsOwnTeam(Collider2D c) {
 		Player p = c.GetComponent<Player> ();
-		if (p != null && p.team == player.team) {
+		if (p != null && player!= null && p.team == player.team) {
 			return true;
 		}
 		return false;
