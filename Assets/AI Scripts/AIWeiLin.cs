@@ -8,18 +8,28 @@ public class AIWeiLin : AIPlayer {
 	
 	float hitRadius;
 
-	private Collider2D[] enemiesAll;
-	private Vector2 prevMove = Vector2.zero;
+	//private Collider2D[] enemiesAll;
 
+	private Vector2 target;
+	private float targetThreshold = 0.5f;
 
 	new void Start() {
 		base.Start ();
 		hitRadius = GetComponent<CircleCollider2D>().radius + BulletPrefab.GetComponent<CircleCollider2D>().radius + 0.02f;
-		enemiesAll = findEnemies (10);
+		//enemiesAll = findEnemies (10);
+		target = transform.position;
 	}
 	
 	void Update () {
-		//enemiesAll = findEnemies (10);
+
+		// Change target location randomly
+		if (Random.Range(0,100)==0) {
+			target = new Vector2(Random.Range(movement2D.xMin*0.75f, movement2D.xMax*0.75f),
+			                     Random.Range(movement2D.yMin*0.75f, movement2D.yMax*0.75f));
+			//target = new Vector2(transform.position.x, transform.position.y) + new Vector2(Random.Range(-3f,3f), Random.Range(-3f,3f));
+			//target = movement2D.ClampToBorders(target);
+		}
+
 
 		Collider2D [] collidersAll = findBullets (10);
 		foreach (Collider2D c in collidersAll) {
@@ -65,7 +75,6 @@ public class AIWeiLin : AIPlayer {
 					ssum += s;
 					s = ssum;
 
-					float sInv = 1f/s;
 					Debug.DrawLine(gameObject.transform.position, gameObject.transform.position+new Vector3(dir.x, dir.y, 0), new Color(s,s,s));
 
 					if (s < minScore ) {
@@ -86,8 +95,6 @@ public class AIWeiLin : AIPlayer {
 
 		Vector3 dest = gameObject.transform.position + moveDir;
 		movement2D.MoveTo (dest);
-
-		prevMove = moveDir;
 	}
 
 	float score(List<Collider2D> bullets, Vector2 pos, bool draw=false) {
@@ -101,7 +108,7 @@ public class AIWeiLin : AIPlayer {
 			float projectionLength = Vector3.Dot(bulletToPlayer, bulletDir.normalized);
 			
 			float pDistance = Mathf.Sqrt(bulletToPlayer.magnitude*bulletToPlayer.magnitude - projectionLength*projectionLength);
-			float distance = bulletToPlayer.magnitude;
+			//float distance = bulletToPlayer.magnitude;
 
 			// Where bullet will be next frame
 			//Debug.DrawLine(bullets[i].gameObject.transform.position + bulletDir*Time.deltaTime,
@@ -164,8 +171,9 @@ public class AIWeiLin : AIPlayer {
 		}
 
 		// Move to middle
-		if ((pos+new Vector2(0,2)).magnitude > 1f)
-			s += (pos+new Vector2(0,2)).magnitude*0.00001f;
+		Debug.DrawLine (transform.position, target, Color.yellow);
+		if ((target-pos).magnitude > targetThreshold)
+			s += (target-pos).magnitude*0.00001f;
 
 		/*
 		foreach (Collider2D enemy in enemiesAll) {
