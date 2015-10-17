@@ -12,8 +12,6 @@ public class Movement2D : MonoBehaviour {
 	// Max speed
 	public float maxSpeed = 3f;
 
-	float threshold = 0.06f;
-	
 	public void Move(Vector3 v) {
 		MoveTo(v + gameObject.transform.position);
 	}
@@ -23,13 +21,9 @@ public class Movement2D : MonoBehaviour {
 	 */
 	public void MoveTo(Vector3 pos) {
 		Vector3 moveVector = pos - gameObject.transform.position;
-		if (moveVector.magnitude < threshold) {
-			gameObject.transform.position = pos;
-		} else {
-			moveVector = Vector3.ClampMagnitude (moveVector, maxSpeed * Time.deltaTime);
-			Vector3 finalPos = ClampToBorders(gameObject.transform.position + moveVector);
-			gameObject.transform.position = finalPos;
-		}
+		moveVector = Vector3.ClampMagnitude (moveVector, maxSpeed * Time.deltaTime);
+		Vector3 finalPos = ClampToBorders(gameObject.transform.position + moveVector);
+		gameObject.transform.position = finalPos;
 	}
 
 	public void MoveToUnrestricted(Vector3 pos) {
