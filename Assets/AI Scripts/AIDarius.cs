@@ -4,6 +4,18 @@ using System.Collections.Generic;
 
 public class AIDarius : AIPlayer {
 
+	static readonly List<Vector3> neutralPositions = new List<Vector3> {
+		new Vector2(0, 0),
+		new Vector2(3, -3),
+		new Vector2(-3, -3)
+	};
+
+	int cnp = 0;
+
+	new void Start () {
+		base.Start ();
+	}
+
 	void Update () {
 
 		foreach (GameObject bullet in GameObject.FindGameObjectsWithTag("Bullet")) {
@@ -13,10 +25,13 @@ public class AIDarius : AIPlayer {
 		Collider2D closest = findClosestBullet();
 		
 		Vector3 playerPosition = gameObject.transform.position;
+
+		if ((playerPosition - neutralPositions[cnp]).magnitude < 0.01f) {
+			cnp = (cnp + 1) % neutralPositions.Count;
+		}
 				
 		if (closest == null) {
-			// TODO causes jitter when moving away from, then immediately towards a bullet
-			movement2D.MoveTo(Vector3.zero);
+			movement2D.MoveTo(neutralPositions[cnp]);
 		} else {
 			closest.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
 			
